@@ -138,17 +138,6 @@
         Y8diuACccRZHPsqLQNjLM5lWUBQvGE65CgRzS4gAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="btnPause.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAABGdBTUEAALGPC/xhBQAAAURJREFUSEvt
-        1ktKBDEUheHahAOfuA7RBQgqvQ3fa3GmKA4cOtd2JyquwsdMRf8DBjK4p5Ku+Br0gQ8qDUlIOnVT3TT/
-        MUvYxw3u8PJFz/ptD4v4tszjBG/4KHjHJZbRlBGeEU3S5wlbGJRDaAXRwDXU9wATRSttmTTRGNUrX8CQ
-        7XW07XMo5hzRAC1O0Ru9MqXTu4LVnnZEY2onbXQYoo65FNd2dmEzRtQpl+LazhVsHhB1yqW4tqMKZ1Nz
-        mlNc29HYNj858SNs7hF1yqW4tnMLmz87XLraok65FNd2tmGj+7RUQFQs1nrakVf0FhDlDFHnFscoRhe/
-        Cns0wBA6zbOoyjpqvjhKdC1uYqKobrd+COgbbVB0iQ/Zdm3vBpoygyPoZEaT5LTKC1T/pzXR66Cr7Rqq
-        QiqvomcVhx0UX5lpfjld9wldbZoNf2kzrQAAAABJRU5ErkJggg==
-</value>
-  </data>
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

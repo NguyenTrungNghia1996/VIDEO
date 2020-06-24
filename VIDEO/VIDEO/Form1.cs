@@ -26,7 +26,8 @@ namespace VIDEO
         };
         IFirebaseClient client;
         double timeStart, timeStop;
-        string timeStartSring= "00:00", timeStopString;
+        string timeStartSring= "00:00", timeStopString, stop;
+        int ID;
         DataTable dt = new DataTable();
         public Form1()
         {
@@ -74,6 +75,7 @@ namespace VIDEO
             dt.Columns.Add("ID");
             dt.Columns.Add("Start");
             dt.Columns.Add("Stop");
+            dt.Columns.Add("SEC");
             dataGridView1.DataSource = dt;
         }
 
@@ -100,10 +102,56 @@ namespace VIDEO
             axWindowsMediaPlayer1.Ctlcontrols.play();
             axWindowsMediaPlayer1.Ctlcontrols.pause();
         }
-
-        private void btnPause_Click(object sender, EventArgs e)
+        int indexRow;
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            indexRow = e.RowIndex;
+            DataGridViewRow row = dataGridView1.Rows[indexRow];
+            double sec = Convert.ToDouble(row.Cells[3].Value.ToString());
+            axWindowsMediaPlayer1.Ctlcontrols.currentPosition = sec;
+            axWindowsMediaPlayer1.Ctlcontrols.play();
             axWindowsMediaPlayer1.Ctlcontrols.pause();
+            stop = row.Cells[2].Value.ToString();
+            ID = Convert.ToInt32(row.Cells[0].Value);
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            FirebaseResponse response1 = await client.DeleteTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
+            MessageBox.Show("Delete marker of ID: " + ID);
+            findbyName(lblName.Text);
+        }
+
+        private async void btnEDIT_Click(object sender, EventArgs e)
+        {
+            string newStop = axWindowsMediaPlayer1.Ctlcontrols.currentPositionString;
+            if (stop != newStop)
+            {
+                FirebaseResponse response1 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
+                Data obj1 = response1.ResultAs<Data>();
+                var data = new Data
+                {
+                    ID = ID.ToString(),
+                    Start = obj1.Start,
+                    Stop = newStop,
+                    StopSec = axWindowsMediaPlayer1.Ctlcontrols.currentPosition.ToString()
+                };
+                SetResponse response = await client.SetTaskAsync("VIDEO/" + lblName.Text + "/" + ID, data);
+                Data result = response.ResultAs<Data>();
+
+                FirebaseResponse response2 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID+1));
+                Data obj2 = response1.ResultAs<Data>();
+                var data1 = new Data
+                {
+                    ID = (ID+1).ToString(),
+                    Start = newStop,
+                    Stop = obj2.Stop,
+                    StopSec = obj2.StopSec
+                };
+                SetResponse response3 = await client.SetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID + 1), data1);
+                Data result2 = response.ResultAs<Data>();
+                findbyName(lblName.Text);
+            }
         }
 
         private async void btnMarker_Click(object sender, EventArgs e)
@@ -111,8 +159,6 @@ namespace VIDEO
             timeStop = axWindowsMediaPlayer1.Ctlcontrols.currentPosition;
             if (timeStop > timeStart) {
                 timeStopString = axWindowsMediaPlayer1.Ctlcontrols.currentPositionString;
-                lblStart.Text = timeStartSring;
-                lblStop.Text = timeStopString;
                 Caunter_Class get;
                 try
                 {
@@ -146,6 +192,7 @@ namespace VIDEO
                 SetResponse response = await client.SetTaskAsync("VIDEO/"+lblName.Text+"/"+(Convert.ToInt32(get.cnt)+1).ToString(), data);
                 Data result = response.ResultAs<Data>();
                 SetResponse response2 = await client.SetTaskAsync("Counter/" + lblName.Text, obj);
+                findbyName(lblName.Text);
                 timeStartSring = timeStopString;
                 timeStart = timeStop;
             }
@@ -164,7 +211,7 @@ namespace VIDEO
             {
                 cnt = 0;
             }
-            for (i = 1; i < cnt; i++) {
+            for (i = 0; i <= cnt; i++) {
                 try
                 {
                     FirebaseResponse response = await client.GetTaskAsync("VIDEO/" + Name + "/" + i);
@@ -173,13 +220,13 @@ namespace VIDEO
                     row["ID"] = obj1.ID;
                     row["Start"] = obj1.Start;
                     row["Stop"] = obj1.Stop;
+                    row["SEC"] = obj1.StopSec;
                     dt.Rows.Add(row);
                 }
                 catch { 
                 }
             }
         }
-
         
     }
 }
