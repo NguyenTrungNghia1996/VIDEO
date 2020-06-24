@@ -40,7 +40,12 @@
             this.lblTime = new System.Windows.Forms.Label();
             this.lblName = new System.Windows.Forms.Label();
             this.btnMarker = new System.Windows.Forms.Button();
+            this.lblStart = new System.Windows.Forms.Label();
+            this.lblStop = new System.Windows.Forms.Label();
+            this.lblID = new System.Windows.Forms.Label();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // axWindowsMediaPlayer1
@@ -49,7 +54,7 @@
             this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(293, 60);
             this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
             this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(499, 330);
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(1008, 614);
             this.axWindowsMediaPlayer1.TabIndex = 0;
             // 
             // listFile
@@ -57,13 +62,13 @@
             this.listFile.FormattingEnabled = true;
             this.listFile.Location = new System.Drawing.Point(12, 60);
             this.listFile.Name = "listFile";
-            this.listFile.Size = new System.Drawing.Size(275, 329);
+            this.listFile.Size = new System.Drawing.Size(275, 615);
             this.listFile.TabIndex = 1;
             this.listFile.SelectedIndexChanged += new System.EventHandler(this.listFile_SelectedIndexChanged);
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(12, 396);
+            this.btnOpen.Location = new System.Drawing.Point(11, 680);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 36);
             this.btnOpen.TabIndex = 2;
@@ -74,7 +79,7 @@
             // btnBack
             // 
             this.btnBack.Image = ((System.Drawing.Image)(resources.GetObject("btnBack.Image")));
-            this.btnBack.Location = new System.Drawing.Point(363, 396);
+            this.btnBack.Location = new System.Drawing.Point(362, 680);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(47, 36);
             this.btnBack.TabIndex = 3;
@@ -84,7 +89,7 @@
             // btnPause
             // 
             this.btnPause.Image = ((System.Drawing.Image)(resources.GetObject("btnPause.Image")));
-            this.btnPause.Location = new System.Drawing.Point(416, 396);
+            this.btnPause.Location = new System.Drawing.Point(415, 680);
             this.btnPause.Name = "btnPause";
             this.btnPause.Size = new System.Drawing.Size(47, 36);
             this.btnPause.TabIndex = 5;
@@ -99,7 +104,7 @@
             // btnNext
             // 
             this.btnNext.Image = ((System.Drawing.Image)(resources.GetObject("btnNext.Image")));
-            this.btnNext.Location = new System.Drawing.Point(469, 396);
+            this.btnNext.Location = new System.Drawing.Point(468, 680);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(47, 36);
             this.btnNext.TabIndex = 7;
@@ -110,7 +115,7 @@
             // 
             this.lblTime.AutoSize = true;
             this.lblTime.Font = new System.Drawing.Font("Segoe UI Emoji", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTime.Location = new System.Drawing.Point(574, 393);
+            this.lblTime.Location = new System.Drawing.Point(1083, 677);
             this.lblTime.Name = "lblTime";
             this.lblTime.Size = new System.Drawing.Size(218, 49);
             this.lblTime.TabIndex = 8;
@@ -128,7 +133,7 @@
             // 
             // btnMarker
             // 
-            this.btnMarker.Location = new System.Drawing.Point(294, 396);
+            this.btnMarker.Location = new System.Drawing.Point(293, 680);
             this.btnMarker.Name = "btnMarker";
             this.btnMarker.Size = new System.Drawing.Size(63, 36);
             this.btnMarker.TabIndex = 10;
@@ -136,11 +141,53 @@
             this.btnMarker.UseVisualStyleBackColor = true;
             this.btnMarker.Click += new System.EventHandler(this.btnMarker_Click);
             // 
+            // lblStart
+            // 
+            this.lblStart.AutoSize = true;
+            this.lblStart.Location = new System.Drawing.Point(1163, 28);
+            this.lblStart.Name = "lblStart";
+            this.lblStart.Size = new System.Drawing.Size(35, 13);
+            this.lblStart.TabIndex = 12;
+            this.lblStart.Text = "label2";
+            // 
+            // lblStop
+            // 
+            this.lblStop.AutoSize = true;
+            this.lblStop.Location = new System.Drawing.Point(1266, 27);
+            this.lblStop.Name = "lblStop";
+            this.lblStop.Size = new System.Drawing.Size(35, 13);
+            this.lblStop.TabIndex = 13;
+            this.lblStop.Text = "label2";
+            // 
+            // lblID
+            // 
+            this.lblID.AutoSize = true;
+            this.lblID.Location = new System.Drawing.Point(1074, 28);
+            this.lblID.Name = "lblID";
+            this.lblID.Size = new System.Drawing.Size(35, 13);
+            this.lblID.TabIndex = 14;
+            this.lblID.Text = "label2";
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(1335, 60);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.Size = new System.Drawing.Size(335, 615);
+            this.dataGridView1.TabIndex = 15;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(804, 624);
+            this.ClientSize = new System.Drawing.Size(1682, 732);
+            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.lblID);
+            this.Controls.Add(this.lblStop);
+            this.Controls.Add(this.lblStart);
             this.Controls.Add(this.btnMarker);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.lblTime);
@@ -154,6 +201,7 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -171,6 +219,10 @@
         private System.Windows.Forms.Label lblTime;
         private System.Windows.Forms.Label lblName;
         private System.Windows.Forms.Button btnMarker;
+        private System.Windows.Forms.Label lblStart;
+        private System.Windows.Forms.Label lblStop;
+        private System.Windows.Forms.Label lblID;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
 

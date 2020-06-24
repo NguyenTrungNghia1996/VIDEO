@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,19 +25,27 @@ namespace VIDEO
 
         };
         IFirebaseClient client;
+        double timeStart, timeStop;
+        string timeStartSring= "00:00", timeStopString;
+        DataTable dt = new DataTable();
         public Form1()
         {
             InitializeComponent();
             timer1.Start();
         }
 
-        private void listFile_SelectedIndexChanged(object sender, EventArgs e)
+        private async void listFile_SelectedIndexChanged(object sender, EventArgs e)
         {
             MediaFile file = listFile.SelectedItem as MediaFile;
             if(file != null){
                 axWindowsMediaPlayer1.URL = file.Path;
-                lblName.Text = "Name: "+file.FileName;
+                lblName.Text = file.FileName;
                 //axWindowsMediaPlayer1.Ctlcontrols.play();
+                timeStart = 0;
+                timeStop = 0;
+                timeStartSring = "00:00";
+                findbyName(file.FileName);
+                //FirebaseResponse response = await client.GetTaskAsync(file.FileName);
             }
         }
 
@@ -62,6 +71,10 @@ namespace VIDEO
             {
                 MessageBox.Show("Kết nối Thành Công ");
             }
+            dt.Columns.Add("ID");
+            dt.Columns.Add("Start");
+            dt.Columns.Add("Stop");
+            dataGridView1.DataSource = dt;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -93,20 +106,80 @@ namespace VIDEO
             axWindowsMediaPlayer1.Ctlcontrols.pause();
         }
 
-        private void btnMarker_Click(object sender, EventArgs e)
+        private async void btnMarker_Click(object sender, EventArgs e)
         {
-
+            timeStop = axWindowsMediaPlayer1.Ctlcontrols.currentPosition;
+            if (timeStop > timeStart) {
+                timeStopString = axWindowsMediaPlayer1.Ctlcontrols.currentPositionString;
+                lblStart.Text = timeStartSring;
+                lblStop.Text = timeStopString;
+                Caunter_Class get;
+                try
+                {
+                    FirebaseResponse response1 = await client.GetTaskAsync("Counter/" + lblName.Text);
+                    get = response1.ResultAs<Caunter_Class>();
+                }
+                catch (NullReferenceException)
+                {
+                    var obj2 = new Caunter_Class
+                    {
+                        cnt = Convert.ToInt32(0).ToString()
+                    };
+                    SetResponse response3 = await client.SetTaskAsync("Counter/" + lblName.Text, obj2);
+                }
+                finally
+                {
+                    FirebaseResponse response1 = await client.GetTaskAsync("Counter/" + lblName.Text);
+                    get = response1.ResultAs<Caunter_Class>();
+                }
+                var data = new Data
+                {   
+                    ID = (Convert.ToInt32(get.cnt) + 1).ToString(),
+                    Start = timeStartSring,
+                    Stop = timeStopString,
+                    StopSec = timeStop.ToString()
+                };
+                var obj = new Caunter_Class
+                {
+                    cnt = (Convert.ToInt32(get.cnt) + 1).ToString()
+                };
+                SetResponse response = await client.SetTaskAsync("VIDEO/"+lblName.Text+"/"+(Convert.ToInt32(get.cnt)+1).ToString(), data);
+                Data result = response.ResultAs<Data>();
+                SetResponse response2 = await client.SetTaskAsync("Counter/" + lblName.Text, obj);
+                timeStartSring = timeStopString;
+                timeStart = timeStop;
+            }
+           
         }
-       /** private async void btnSave_Click(object sender, EventArgs e)
-       {
-           var data = new Data
+        private async void findbyName(string Name) {
+            int i, cnt;
+            dt.Rows.Clear();
+            try
             {
-               ID = txtID.Text,
-               Name = txtName.Text
-            };
-            SetResponse response = await client.SetTaskAsync("INFO/", data);
-            Data result = response.ResultAs<Data>();
-            MessageBox.Show("Data Insert");
-        }**/
+                FirebaseResponse response = await client.GetTaskAsync("Counter/" + Name);
+                Caunter_Class obj = response.ResultAs<Caunter_Class>();
+                cnt = Convert.ToInt32(obj.cnt);
+            }
+            catch (NullReferenceException)
+            {
+                cnt = 0;
+            }
+            for (i = 1; i < cnt; i++) {
+                try
+                {
+                    FirebaseResponse response = await client.GetTaskAsync("VIDEO/" + Name + "/" + i);
+                    Data obj1 = response.ResultAs<Data>();
+                    DataRow row = dt.NewRow();
+                    row["ID"] = obj1.ID;
+                    row["Start"] = obj1.Start;
+                    row["Stop"] = obj1.Stop;
+                    dt.Rows.Add(row);
+                }
+                catch { 
+                }
+            }
+        }
+
+        
     }
 }
