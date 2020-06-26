@@ -385,10 +385,10 @@ namespace VIDEO
             txt.Close();
             for (int i = 0; i <= cnt; i++)
             {
-                var data = new Data
+                var datass = new Data
                 {
                     ID = (i+1).ToString(),
-                    StopSec = listData[i].StopSec,
+                    StopSec = Convert.ToInt32(listData[i].StopSec),
                     Main = listData[i].Main,
                     Sub1 = listData[i].Sub1,
                     Sub2 = listData[i].Sub2,
@@ -397,7 +397,7 @@ namespace VIDEO
                     Sub5 = listData[i].Sub5,
                     Sub6 = listData[i].Sub6
                 };
-                SetResponse respo = await client.SetTaskAsync("VIDEO/" + lblName.Text + "/" + (i + 1).ToString(), data);
+                SetResponse respo = await client.SetTaskAsync("VIDEO/" + lblName.Text + "/" + (i + 1).ToString(), datass);
                 _ = respo.ResultAs<Data>();
             }
             
