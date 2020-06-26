@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,13 +7,14 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FireSharp.Config;
 using FireSharp.Interfaces;
 using FireSharp.Response;
-
+using Newtonsoft.Json;
 
 namespace VIDEO
 {
@@ -111,7 +113,7 @@ namespace VIDEO
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            string TNS = axWindowsMediaPlayer1.Ctlcontrols.currentPositionString;
+            string TNS = Convert.ToInt32(axWindowsMediaPlayer1.Ctlcontrols.currentPosition * 1000).ToString();
             lblTime.Text = "Time: " +TNS;
         }
 
@@ -168,33 +170,7 @@ namespace VIDEO
                      cnt = (Convert.ToInt32(get.cnt)-1).ToString()
                  };
                  SetResponse response3 = await client.SetTaskAsync("Counter/" + lblName.Text, obj);
-                for (int i = 1; i < (Convert.ToInt32(get.cnt)-ID); i++) {
-                     t++;
-                     try {
-                         FirebaseResponse res = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID + i));
-                         Data obj1 = res.ResultAs<Data>();
-                         var data = new Data
-                         {
-                             ID = (ID+t).ToString(),
-                             StopSec = obj1.StopSec,
-                             Main = obj1.Main,
-                             Sub1 = obj1.Sub1,
-                             Sub2 = obj1.Sub2,
-                             Sub3 = obj1.Sub3,
-                             Sub4 = obj1.Sub4,
-                             Sub5 = obj1.Sub5,
-                             Sub6 = obj1.Sub6
-                         };
-                         SetResponse response2 = await client.SetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID + t), data);
-                         Data result = response2.ResultAs<Data>();
-                     }
-                     catch
-                     {
-
-                     }
-
-                 }
-                //FirebaseResponse response1 = await client.DeleteTaskAsync("VIDEO/" + lblName.Text + "/" + (Convert.ToInt32(get.cnt)));
+                 FirebaseResponse response1 = await client.DeleteTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
             }
              catch { }
            
@@ -365,10 +341,86 @@ namespace VIDEO
 
         }
 
+        public async void button2_Click(object sender, EventArgs e)
+        {
+            List<Data> listData = new List<Data>();
+            int cnt;
+            try
+            {
+                FirebaseResponse response = await client.GetTaskAsync("Counter/" + lblName.Text);
+                Caunter_Class obj = response.ResultAs<Caunter_Class>();
+                cnt = Convert.ToInt32(obj.cnt);
+            }
+            catch (NullReferenceException)
+            {
+                cnt = 0;
+            }
+            for (int i = 0; i <= cnt; i++)
+            {
+                try
+                {
+                    FirebaseResponse response1 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + i);
+                    Data obj1 = response1.ResultAs<Data>();
+                    Data d = new Data();
+                    d.ID = obj1.ID;
+                    d.StopSec = obj1.StopSec;
+                    d.Main = obj1.Main;
+                    d.Sub1 = obj1.Sub1;
+                    d.Sub2 = obj1.Sub2;
+                    d.Sub3 = obj1.Sub3;
+                    d.Sub4 = obj1.Sub4;
+                    d.Sub5 = obj1.Sub5;
+                    d.Sub6 = obj1.Sub6;
+                    listData.Add(d);
+                }
+                catch
+                {
+                }
+            }
+
+            listData.Sort(new SortData());
+            string output = JsonConvert.SerializeObject(listData);
+            TextWriter txt = new StreamWriter("D:\\" + lblName.Text + ".txt");
+            txt.Write(output);
+            txt.Close();
+            for (int i = 0; i <= cnt; i++)
+            {
+                var data = new Data
+                {
+                    ID = (i+1).ToString(),
+                    StopSec = listData[i].StopSec,
+                    Main = listData[i].Main,
+                    Sub1 = listData[i].Sub1,
+                    Sub2 = listData[i].Sub2,
+                    Sub3 = listData[i].Sub3,
+                    Sub4 = listData[i].Sub4,
+                    Sub5 = listData[i].Sub5,
+                    Sub6 = listData[i].Sub6
+                };
+                SetResponse respo = await client.SetTaskAsync("VIDEO/" + lblName.Text + "/" + (i + 1).ToString(), data);
+                _ = respo.ResultAs<Data>();
+            }
+            
+            findbyName(lblName.Text);
+        }
+
+        class SortData : IComparer<Data>
+        {
+            public int Compare(Data x, Data y)
+            {
+                if (x.StopSec.CompareTo(y.StopSec)!=0)
+                {
+                    return x.StopSec.CompareTo(y.StopSec);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
 
         private async void btnEDIT_Click(object sender, EventArgs e)
         {
-
             if (ID != 0)
             {
                 try
@@ -377,14 +429,14 @@ namespace VIDEO
                     Data obj = res.ResultAs<Data>();
                     int timeSt = Convert.ToInt32(obj.StopSec);
                     int newStop = Convert.ToInt32((axWindowsMediaPlayer1.Ctlcontrols.currentPosition) * 1000);
-                    if (stop != newStop & newStop < timeSt)
+                    if ( newStop < timeSt)
                     {
                         FirebaseResponse response1 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
                         Data obj1 = response1.ResultAs<Data>();
                         var data = new Data
                         {
                             ID = ID.ToString(),
-                            StopSec = newStop.ToString(),
+                            StopSec = newStop,
                             Main = cbMain.Text,
                             Sub1 = cbSub1.Text,
                             Sub2 = cbSub2.Text,
@@ -438,7 +490,7 @@ namespace VIDEO
                 var data = new Data
                 {
                     ID = (Convert.ToInt32(get.cnt) + 1).ToString(),
-                    StopSec = (Convert.ToInt32(timeStop * 1000)).ToString(),
+                    StopSec = Convert.ToInt32(timeStop * 1000),
                     Main = cbMain.Text,
                     Sub1 = cbSub1.Text,
                     Sub2= cbSub2.Text,
@@ -473,7 +525,7 @@ namespace VIDEO
             {
                 cnt = 0;
             }
-            for (i = 0; i <= cnt; i++) {
+            for (i = 0; i <= cnt+1; i++) {
                 try
                 {
                     FirebaseResponse response = await client.GetTaskAsync("VIDEO/" + Name + "/" + i);

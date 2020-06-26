@@ -1,9 +1,11 @@
-﻿namespace VIDEO
+﻿using System;
+
+namespace VIDEO
 {
-    internal class Data
+    public class Data 
     {
         public string ID { get; set; }
-        public string StopSec { get; set; }
+        public int StopSec { get; set; }
 
         public string Main { get; set; }
         public string Sub1 { get; set; }
