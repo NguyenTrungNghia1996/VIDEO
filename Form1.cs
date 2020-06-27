@@ -140,13 +140,12 @@ namespace VIDEO
         {
             indexRow = e.RowIndex;
             DataGridViewRow row;
-            try {  row = dataGridView1.Rows[indexRow-1]; }
+            try {  row = dataGridView1.Rows[indexRow]; }
             catch {  row = dataGridView1.Rows[0]; }
             double sec = (Convert.ToInt32(row.Cells[2].Value))/1000;
             axWindowsMediaPlayer1.Ctlcontrols.currentPosition = sec;
             axWindowsMediaPlayer1.Ctlcontrols.pause();
             stop = Convert.ToInt32(row.Cells[2].Value);
-            ID = Convert.ToInt32(row.Cells[0].Value);
             FirebaseResponse response1 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
             Data obj1 = response1.ResultAs<Data>();
             cbMain.SelectedIndex = cbMain.FindStringExact(obj1.Main);
