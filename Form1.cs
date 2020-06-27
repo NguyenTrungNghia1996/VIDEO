@@ -42,7 +42,7 @@ namespace VIDEO
             if(file != null){
                 axWindowsMediaPlayer1.URL = file.Path;
                 lblName.Text = file.FileName;
-                //axWindowsMediaPlayer1.Ctlcontrols.play();
+                axWindowsMediaPlayer1.Ctlcontrols.pause();
                 timeStart = 0;
                 timeStop = 0;
                 timeStartSring = "00:00";
@@ -103,6 +103,7 @@ namespace VIDEO
             cbMain.Items.Add("Pedestal");
             cbMain.Items.Add("Zoom");
             cbMain.Items.Add("Roll");
+            cbMain.Items.Add("");
             cbSub1.Enabled = false;
             cbSub2.Enabled = false;
             cbSub3.Enabled = false;
@@ -139,11 +140,10 @@ namespace VIDEO
         {
             indexRow = e.RowIndex;
             DataGridViewRow row;
-            try {  row = dataGridView1.Rows[indexRow]; }
+            try {  row = dataGridView1.Rows[indexRow-1]; }
             catch {  row = dataGridView1.Rows[0]; }
-            int sec = (Convert.ToInt32(row.Cells[2].Value))/1000;
+            double sec = (Convert.ToInt32(row.Cells[2].Value))/1000;
             axWindowsMediaPlayer1.Ctlcontrols.currentPosition = sec;
-            axWindowsMediaPlayer1.Ctlcontrols.play();
             axWindowsMediaPlayer1.Ctlcontrols.pause();
             stop = Convert.ToInt32(row.Cells[2].Value);
             ID = Convert.ToInt32(row.Cells[0].Value);
@@ -195,12 +195,16 @@ namespace VIDEO
             {
                 cbSub1.Items.Add("Handheld");
                 cbSub1.Items.Add("Tripod");
+                cbSub1.Items.Add("");
 
                 cbSub2.Items.Add("Follow");
                 cbSub2.Items.Add("NoFollow");
+                cbSub2.Items.Add("");
 
                 cbSub3.Items.Add("InCar");
                 cbSub3.Items.Add("CarRig");
+                cbSub3.Items.Add("");
+
                 cbSub4.Enabled = false;
                 cbSub5.Enabled = false;
                 cbSub6.Enabled = false;
@@ -209,99 +213,127 @@ namespace VIDEO
             {
                 cbSub1.Items.Add("LeftToRight");
                 cbSub1.Items.Add("RightToLeft");
+                cbSub1.Items.Add("");
 
                 cbSub2.Items.Add("Follow");
                 cbSub2.Items.Add("NoFollow");
+                cbSub2.Items.Add("");
 
                 cbSub3.Items.Add("Slow");
                 cbSub3.Items.Add("Normal");
                 cbSub3.Items.Add("Fast");
+                cbSub3.Items.Add("");
 
                 cbSub4.Items.Add("WithTruck");
                 cbSub4.Items.Add("WithDolly");
+                cbSub4.Items.Add("");
 
                 cbSub5.Items.Add("Handheld");
                 cbSub5.Items.Add("Tripod");
+                cbSub5.Items.Add("");
 
                 cbSub6.Items.Add("Parallax");
                 cbSub6.Items.Add("Diagonal	");
+                cbSub6.Items.Add("");
             }
             if (cbMain.SelectedItem == "Tilt")
             {
                 cbSub1.Items.Add("Up");
                 cbSub1.Items.Add("Down");
+                cbSub1.Items.Add("");
 
                 cbSub2.Items.Add("Follow");
                 cbSub2.Items.Add("NoFollow");
+                cbSub2.Items.Add("");
 
                 cbSub3.Items.Add("Slow");
                 cbSub3.Items.Add("Normal");
                 cbSub3.Items.Add("Fast");
+                cbSub3.Items.Add("");
 
                 cbSub4.Items.Add("WithDolly");
                 cbSub4.Items.Add("WithPedestal");
-               
+                cbSub4.Items.Add("");
+
                 cbSub5.Items.Add("Handheld");
                 cbSub5.Items.Add("Tripod");
+                cbSub5.Items.Add("");
 
                 cbSub6.Items.Add("Diagonal");
+                cbSub6.Items.Add("");
             }
             if (cbMain.SelectedItem == "Dolly")
             {
                 cbSub1.Items.Add("Forwards");
-                cbSub1.Items.Add("Backwards");
+                cbSub1.Items.Add("Backwards"); 
+                cbSub1.Items.Add("");
 
                 cbSub2.Items.Add("Follow");
                 cbSub2.Items.Add("NoFollow");
+                cbSub2.Items.Add("");
 
                 cbSub3.Items.Add("Slow");
                 cbSub3.Items.Add("Normal");
                 cbSub3.Items.Add("Fast");
+                cbSub3.Items.Add("");
 
                 cbSub4.Items.Add("WithPan");
                 cbSub4.Items.Add("WithTilt");
                 cbSub4.Items.Add("Car-rig");
                 cbSub4.Items.Add("In-car");
+                cbSub4.Items.Add("");
 
                 cbSub5.Items.Add("Gimbal");
                 cbSub5.Items.Add("Handheld");
+                cbSub5.Items.Add("");
 
                 cbSub6.Enabled = false;
+                cbSub6.Items.Add("");
             }
             if (cbMain.SelectedItem == "Truck")
             {
                 cbSub1.Items.Add("LeftToRight");
                 cbSub1.Items.Add("RightToLeft");
+                cbSub1.Items.Add("");
 
                 cbSub2.Items.Add("Follow");
                 cbSub2.Items.Add("NoFollow");
+                cbSub2.Items.Add("");
 
                 cbSub3.Items.Add("Slow");
                 cbSub3.Items.Add("Normal");
                 cbSub3.Items.Add("Fast");
+                cbSub3.Items.Add("");
 
                 cbSub4.Items.Add("WithPan");
                 cbSub4.Items.Add("InCar");
                 cbSub4.Items.Add("CarRig");
+                cbSub4.Items.Add("");
 
                 cbSub5.Items.Add("Gimbal");
                 cbSub5.Items.Add("Handheld");
+                cbSub5.Items.Add("");
 
                 cbSub6.Items.Add("Parallax");
+                cbSub6.Items.Add("");
             }
             if (cbMain.SelectedItem == "Pedestal")
             {
                 cbSub1.Items.Add("Up");
                 cbSub1.Items.Add("Down");
+                cbSub1.Items.Add("");
 
                 cbSub2.Items.Add("Follow");
                 cbSub2.Items.Add("NoFollow");
+                cbSub2.Items.Add("");
 
                 cbSub3.Items.Add("Slow");
                 cbSub3.Items.Add("Normal");
                 cbSub3.Items.Add("Fast");
+                cbSub3.Items.Add("");
 
                 cbSub4.Items.Add("WithTilt");
+                cbSub4.Items.Add("");
 
                 cbSub5.Enabled = false;
                 cbSub6.Enabled = false;
@@ -310,13 +342,16 @@ namespace VIDEO
             {
                 cbSub1.Items.Add("In");
                 cbSub1.Items.Add("Out");
+                cbSub1.Items.Add("");
 
                 cbSub2.Items.Add("Follow");
                 cbSub2.Items.Add("NoFollow");
+                cbSub2.Items.Add("");
 
                 cbSub3.Items.Add("Slow");
                 cbSub3.Items.Add("Normal");
                 cbSub3.Items.Add("Fast");
+                cbSub2.Items.Add("");
 
 
                 cbSub4.Enabled = false;
@@ -327,13 +362,24 @@ namespace VIDEO
             {
                 cbSub1.Items.Add("Clockwise");
                 cbSub1.Items.Add("Counter-Clockwise");
+                cbSub1.Items.Add("");
 
                 cbSub2.Items.Add("Follow");
                 cbSub2.Items.Add("NoFollow");
+                cbSub2.Items.Add("");
 
                 cbSub3.Items.Add("Slow");
                 cbSub3.Items.Add("Normal");
                 cbSub3.Items.Add("Fast");
+                cbSub3.Items.Add("");
+                cbSub4.Enabled = false;
+                cbSub5.Enabled = false;
+                cbSub6.Enabled = false;
+            }
+            if (cbMain.SelectedItem == "") {
+                cbSub1.Enabled = false;
+                cbSub2.Enabled = false;
+                cbSub3.Enabled = false;
                 cbSub4.Enabled = false;
                 cbSub5.Enabled = false;
                 cbSub6.Enabled = false;
@@ -419,10 +465,19 @@ namespace VIDEO
             }
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            axWindowsMediaPlayer1.Ctlcontrols.pause();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            axWindowsMediaPlayer1.Ctlcontrols.play();
+        }
+
         private async void btnEDIT_Click(object sender, EventArgs e)
         {
-            if (ID != 0)
-            {
+
                 try
                 {
                     FirebaseResponse res = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID + 1));
@@ -457,10 +512,7 @@ namespace VIDEO
                 catch
                 {
                 }
-            }
-            else {
-                MessageBox.Show("ID: " + ID + " Không tồn tại");
-            }
+         
         }
 
         private async void btnMarker_Click(object sender, EventArgs e)

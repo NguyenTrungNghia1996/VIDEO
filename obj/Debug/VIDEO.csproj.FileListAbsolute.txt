@@ -74,4 +74,3 @@ D:\GIT\VIDEO\VIDEO\obj\Debug\VIDEO.csproj.CoreCompileInputs.cache
 D:\GIT\VIDEO\VIDEO\obj\Debug\VIDEO.csproj.CopyComplete
 D:\GIT\VIDEO\VIDEO\obj\Debug\VIDEO.exe
 D:\GIT\VIDEO\VIDEO\obj\Debug\VIDEO.pdb
-D:\GIT\VIDEO\VIDEO\obj\Debug\VIDEO.csprojAssemblyReference.cache
