@@ -31,10 +31,8 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
-            this.listFile = new System.Windows.Forms.ListBox();
             this.btnOpen = new System.Windows.Forms.Button();
             this.btnBack = new System.Windows.Forms.Button();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.btnNext = new System.Windows.Forms.Button();
             this.lblTime = new System.Windows.Forms.Label();
             this.lblName = new System.Windows.Forms.Label();
@@ -59,8 +57,10 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.txtSetTime = new System.Windows.Forms.TextBox();
+            this.btnSetTime = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -68,20 +68,11 @@
             // axWindowsMediaPlayer1
             // 
             this.axWindowsMediaPlayer1.Enabled = true;
-            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(279, 60);
+            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(12, 60);
             this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
             this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(1022, 614);
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(1289, 572);
             this.axWindowsMediaPlayer1.TabIndex = 0;
-            // 
-            // listFile
-            // 
-            this.listFile.FormattingEnabled = true;
-            this.listFile.Location = new System.Drawing.Point(12, 60);
-            this.listFile.Name = "listFile";
-            this.listFile.Size = new System.Drawing.Size(261, 615);
-            this.listFile.TabIndex = 1;
-            this.listFile.SelectedIndexChanged += new System.EventHandler(this.listFile_SelectedIndexChanged);
             // 
             // btnOpen
             // 
@@ -102,11 +93,6 @@
             this.btnBack.TabIndex = 3;
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
-            // 
-            // timer1
-            // 
-            this.timer1.Interval = 10;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // btnNext
             // 
@@ -132,11 +118,12 @@
             // 
             this.lblName.AccessibleRole = System.Windows.Forms.AccessibleRole.SplitButton;
             this.lblName.AutoSize = true;
-            this.lblName.Font = new System.Drawing.Font("Segoe UI Historic", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblName.Location = new System.Drawing.Point(289, 15);
+            this.lblName.Font = new System.Drawing.Font("Segoe UI Historic", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblName.Location = new System.Drawing.Point(6, 9);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(0, 25);
+            this.lblName.Size = new System.Drawing.Size(83, 32);
             this.lblName.TabIndex = 9;
+            this.lblName.Text = "Name";
             // 
             // btnMarker
             // 
@@ -335,7 +322,7 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 34;
-            this.button4.Text = "button4";
+            this.button4.Text = "<<";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
@@ -345,30 +332,47 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 35;
-            this.button3.Text = "button3";
+            this.button3.Text = ">>";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button5
+            // timer1
             // 
-            this.button5.Location = new System.Drawing.Point(1123, 681);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 36;
-            this.button5.Text = "button5";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.timer1.Interval = 1;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // timer2
+            // txtSetTime
             // 
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.txtSetTime.Location = new System.Drawing.Point(1092, 683);
+            this.txtSetTime.Name = "txtSetTime";
+            this.txtSetTime.Size = new System.Drawing.Size(150, 20);
+            this.txtSetTime.TabIndex = 36;
+            // 
+            // btnSetTime
+            // 
+            this.btnSetTime.Location = new System.Drawing.Point(1167, 704);
+            this.btnSetTime.Name = "btnSetTime";
+            this.btnSetTime.Size = new System.Drawing.Size(75, 23);
+            this.btnSetTime.TabIndex = 37;
+            this.btnSetTime.Text = "SetTime(ms)";
+            this.btnSetTime.UseVisualStyleBackColor = true;
+            this.btnSetTime.Click += new System.EventHandler(this.btnSetTime_Click);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(12, 638);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(1505, 23);
+            this.progressBar1.TabIndex = 38;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1529, 1045);
-            this.Controls.Add(this.button5);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.btnSetTime);
+            this.Controls.Add(this.txtSetTime);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button2);
@@ -395,7 +399,6 @@
             this.Controls.Add(this.btnNext);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.btnOpen);
-            this.Controls.Add(this.listFile);
             this.Controls.Add(this.axWindowsMediaPlayer1);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -410,10 +413,8 @@
         #endregion
 
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
-        private System.Windows.Forms.ListBox listFile;
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.Button btnBack;
-        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.Label lblTime;
         private System.Windows.Forms.Label lblName;
@@ -438,8 +439,10 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.TextBox txtSetTime;
+        private System.Windows.Forms.Button btnSetTime;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 

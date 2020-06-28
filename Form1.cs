@@ -15,6 +15,7 @@ using FireSharp.Config;
 using FireSharp.Interfaces;
 using FireSharp.Response;
 using Newtonsoft.Json;
+using WMPLib;
 
 namespace VIDEO
 {
@@ -34,47 +35,33 @@ namespace VIDEO
         {
             InitializeComponent();
             timer1.Start();
-
         }
-
-        private void listFile_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            MediaFile file = listFile.SelectedItem as MediaFile;
-            if(file != null){
-                axWindowsMediaPlayer1.URL = file.Path;
-                lblName.Text = file.FileName;
-                axWindowsMediaPlayer1.Ctlcontrols.pause();
-                timeStart = 0;
-                timeStop = 0;
-                timeStartSring = "00:00";
-                findbyName(file.FileName);
-                //FirebaseResponse response = await client.GetTaskAsync(file.FileName);
-            }
-        }
-
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog { Multiselect = true, ValidateNames = true, Filter = "MP4|*.mp4|MKV|*.mkv" }) {
+            MediaFile file = new MediaFile();
+            using (OpenFileDialog ofd = new OpenFileDialog { Multiselect = false, ValidateNames = true, Filter = "MP4|*.mp4|MKV|*.mkv" }) {
                 if (ofd.ShowDialog() == DialogResult.OK) {
-                    List<MediaFile> files = new List<MediaFile>();
-                    foreach (string fileName in ofd.FileNames) {
-                        FileInfo fi = new FileInfo(fileName);
-                        files.Add(new MediaFile() { FileName = Path.GetFileNameWithoutExtension(fi.FullName), Path = fi.FullName });
-                    }
-                    listFile.DataSource = files;
+                    MediaFile files = new MediaFile();
+                    FileInfo fi = new FileInfo(ofd.FileName);
+                    file.FileName = Path.GetFileNameWithoutExtension(fi.FullName);
+                    file.Path = fi.FullName;
+                }
+                if (file != null)
+                {
+                    axWindowsMediaPlayer1.URL = file.Path;
+                    lblName.Text = file.FileName;
+                    axWindowsMediaPlayer1.Ctlcontrols.pause();
+                    timeStart = 0;
+                    timeStop = 0;
+                    timeStartSring = "00:00";
+                    findbyName(file.FileName);
+                    //FirebaseResponse response = await client.GetTaskAsync(file.FileName);
                 }
             }
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            listFile.ValueMember = "Path";
-            listFile.DisplayMember = "FileName";
             client = new FireSharp.FirebaseClient(config);
-            if (client != null)
-            {
-                MessageBox.Show("Kết nối Thành Công ");
-            }
-
             dt.Columns.Add("ID");
             dt.Columns.Add("FileName");
             dt.Columns.Add("Stop-time-[ms]");
@@ -111,18 +98,12 @@ namespace VIDEO
             cbSub4.Enabled = false;
             cbSub5.Enabled = false;
             cbSub6.Enabled = false;
+            
         }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            string TNS = Convert.ToInt32(axWindowsMediaPlayer1.Ctlcontrols.currentPosition * 1000).ToString();
-            lblTime.Text = "Time: " +TNS;
-        }
-
         private void btnBack_Click(object sender, EventArgs e)
         {
             double TND = axWindowsMediaPlayer1.Ctlcontrols.currentPosition;
-            double TB = TND - 0.03;
+            double TB = TND - 0.06;
             axWindowsMediaPlayer1.Ctlcontrols.currentPosition = TB;
             axWindowsMediaPlayer1.Ctlcontrols.play();
             axWindowsMediaPlayer1.Ctlcontrols.pause();
@@ -131,7 +112,7 @@ namespace VIDEO
         private void btnNext_Click(object sender, EventArgs e)
         {
             double TND = axWindowsMediaPlayer1.Ctlcontrols.currentPosition;
-            double TB = TND + 0.03;
+            double TB = TND + 0.06;
             axWindowsMediaPlayer1.Ctlcontrols.currentPosition = TB;
             axWindowsMediaPlayer1.Ctlcontrols.play();
             axWindowsMediaPlayer1.Ctlcontrols.pause();
@@ -476,22 +457,44 @@ namespace VIDEO
 
         private void button4_Click(object sender, EventArgs e)
         {
+            IWMPControls2 Ctlcontrols2 = (IWMPControls2)axWindowsMediaPlayer1.Ctlcontrols;
+            double frameRate = axWindowsMediaPlayer1.network.encodedFrameRate;
+            Console.WriteLine("FRAMERATE: " + frameRate); //Debug
+            double step = 1.0 / frameRate;
+            Console.WriteLine("STEP: " + step); //Debug
+            axWindowsMediaPlayer1.Ctlcontrols.currentPosition -= step; //Go backwards
             axWindowsMediaPlayer1.Ctlcontrols.pause();
+            Ctlcontrols2.step(1);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            axWindowsMediaPlayer1.Ctlcontrols.play();
+            IWMPControls2 Ctlcontrols2 = (IWMPControls2)axWindowsMediaPlayer1.Ctlcontrols;
+            double frameRate = axWindowsMediaPlayer1.network.encodedFrameRate;
+            Console.WriteLine("FRAMERATE: " + frameRate); //Debug
+            double step = 1.0 / frameRate;
+            Console.WriteLine("STEP: " + step); //Debug
+            axWindowsMediaPlayer1.Ctlcontrols.currentPosition += step; //Go backwards
+            axWindowsMediaPlayer1.Ctlcontrols.pause();
+            Ctlcontrols2.step(1);
         }
 
-        private async void button5_Click(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
-            timer2.Start();
+            string TNS = (axWindowsMediaPlayer1.Ctlcontrols.currentPosition * 1000).ToString();
+            lblTime.Text = "Time: " + TNS;
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        private void btnSetTime_Click(object sender, EventArgs e)
         {
-            
+            try {
+                double ti = (Convert.ToInt32(txtSetTime.Text))/1000;
+                axWindowsMediaPlayer1.Ctlcontrols.currentPosition = ti;
+                
+            } catch
+            {
+                MessageBox.Show("Không nhập chữ !!");
+            }
         }
 
         private async void btnEDIT_Click(object sender, EventArgs e)
@@ -580,6 +583,7 @@ namespace VIDEO
                 findbyName(lblName.Text);
                 timeStartSring = timeStopString;
                 timeStart = timeStop;
+
             }
            
         }
