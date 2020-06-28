@@ -34,6 +34,7 @@ namespace VIDEO
         {
             InitializeComponent();
             timer1.Start();
+
         }
 
         private void listFile_SelectedIndexChanged(object sender, EventArgs e)
@@ -140,12 +141,17 @@ namespace VIDEO
         {
             indexRow = e.RowIndex;
             DataGridViewRow row;
-            try {  row = dataGridView1.Rows[indexRow]; }
-            catch {  row = dataGridView1.Rows[0]; }
-            double sec = (Convert.ToInt32(row.Cells[2].Value))/1000;
+            try {  
+                row = dataGridView1.Rows[indexRow];
+            }
+            catch {  
+                row = dataGridView1.Rows[0];
+            }
+            double sec = (Convert.ToDouble(row.Cells[2].Value))/1000;
             axWindowsMediaPlayer1.Ctlcontrols.currentPosition = sec;
             axWindowsMediaPlayer1.Ctlcontrols.pause();
             stop = Convert.ToInt32(row.Cells[2].Value);
+            ID = Convert.ToInt32(row.Cells[0].Value);
             FirebaseResponse response1 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
             Data obj1 = response1.ResultAs<Data>();
             cbMain.SelectedIndex = cbMain.FindStringExact(obj1.Main);
@@ -155,6 +161,10 @@ namespace VIDEO
             cbSub4.SelectedIndex = cbSub4.FindStringExact(obj1.Sub4);
             cbSub5.SelectedIndex = cbSub5.FindStringExact(obj1.Sub5);
             cbSub6.SelectedIndex = cbSub6.FindStringExact(obj1.Sub6);
+            FirebaseResponse response2 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID - 1));
+            Data obj2 = response2.ResultAs<Data>();
+            double sec2 = (Convert.ToDouble(obj2.StopSec)) / 1000;
+
         }
 
         private async void button1_Click(object sender, EventArgs e)
@@ -472,6 +482,16 @@ namespace VIDEO
         private void button3_Click(object sender, EventArgs e)
         {
             axWindowsMediaPlayer1.Ctlcontrols.play();
+        }
+
+        private async void button5_Click(object sender, EventArgs e)
+        {
+            timer2.Start();
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            
         }
 
         private async void btnEDIT_Click(object sender, EventArgs e)
