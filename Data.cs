@@ -5,7 +5,7 @@ namespace VIDEO
     public class Data 
     {
         public string ID { get; set; }
-        public int StopSec { get; set; }
+        public double StopSec { get; set; }
 
         public string Main { get; set; }
         public string Sub1 { get; set; }

@@ -27,10 +27,12 @@ namespace VIDEO
             BasePath = "https://video-ea5fa.firebaseio.com/"
         };
         IFirebaseClient client;
-        double timeStart, timeStop;
+        double timeStart, timeStop, stop;
         string timeStartSring= "00:00", timeStopString ;
-        int ID, stop;
+        int ID;
+
         DataTable dt = new DataTable();
+        SaveFileDialog save;
         public Form1()
         {
             InitializeComponent();
@@ -50,7 +52,7 @@ namespace VIDEO
                 {
                     axWindowsMediaPlayer1.URL = file.Path;
                     lblName.Text = file.FileName;
-                    axWindowsMediaPlayer1.Ctlcontrols.pause();
+                    axWindowsMediaPlayer1.Ctlcontrols.stop();
                     timeStart = 0;
                     timeStop = 0;
                     timeStartSring = "00:00";
@@ -100,23 +102,6 @@ namespace VIDEO
             cbSub6.Enabled = false;
             
         }
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            double TND = axWindowsMediaPlayer1.Ctlcontrols.currentPosition;
-            double TB = TND - 0.06;
-            axWindowsMediaPlayer1.Ctlcontrols.currentPosition = TB;
-            axWindowsMediaPlayer1.Ctlcontrols.play();
-            axWindowsMediaPlayer1.Ctlcontrols.pause();
-        }
-
-        private void btnNext_Click(object sender, EventArgs e)
-        {
-            double TND = axWindowsMediaPlayer1.Ctlcontrols.currentPosition;
-            double TB = TND + 0.06;
-            axWindowsMediaPlayer1.Ctlcontrols.currentPosition = TB;
-            axWindowsMediaPlayer1.Ctlcontrols.play();
-            axWindowsMediaPlayer1.Ctlcontrols.pause();
-        }
         int indexRow;
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -128,10 +113,10 @@ namespace VIDEO
             catch {  
                 row = dataGridView1.Rows[0];
             }
-            double sec = (Convert.ToDouble(row.Cells[2].Value))/1000;
+            /*double sec = (Convert.ToDouble(row.Cells[2].Value))/1000;
             axWindowsMediaPlayer1.Ctlcontrols.currentPosition = sec;
-            axWindowsMediaPlayer1.Ctlcontrols.pause();
-            stop = Convert.ToInt32(row.Cells[2].Value);
+            axWindowsMediaPlayer1.Ctlcontrols.pause();*/
+            stop = Convert.ToDouble(row.Cells[2].Value)/1000;
             ID = Convert.ToInt32(row.Cells[0].Value);
             FirebaseResponse response1 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
             Data obj1 = response1.ResultAs<Data>();
@@ -142,15 +127,24 @@ namespace VIDEO
             cbSub4.SelectedIndex = cbSub4.FindStringExact(obj1.Sub4);
             cbSub5.SelectedIndex = cbSub5.FindStringExact(obj1.Sub5);
             cbSub6.SelectedIndex = cbSub6.FindStringExact(obj1.Sub6);
-            FirebaseResponse response2 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID - 1));
-            Data obj2 = response2.ResultAs<Data>();
-            double sec2 = (Convert.ToDouble(obj2.StopSec)) / 1000;
+            if (ID > 1) {
+                FirebaseResponse response2 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID - 1));
+                Data obj2 = response2.ResultAs<Data>();
+                double sec2 = (Convert.ToDouble(obj2.StopSec)) / 1000;
+                axWindowsMediaPlayer1.Ctlcontrols.currentPosition = sec2;
+                //axWindowsMediaPlayer1.Ctlcontrols.play();
 
+            }
+            else
+            {
+                double sec2 = 0;
+                axWindowsMediaPlayer1.Ctlcontrols.currentPosition = 0;
+                //axWindowsMediaPlayer1.Ctlcontrols.play();
+            }
         }
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            int t = 0;
              try
              {
                  FirebaseResponse response = await client.GetTaskAsync("Counter/" + lblName.Text);
@@ -416,10 +410,19 @@ namespace VIDEO
 
             listData.Sort(new SortData());
             string output = JsonConvert.SerializeObject(listData);
-            TextWriter txt = new StreamWriter("D:\\" + lblName.Text + ".txt");
-            txt.Write(output);
-            txt.Close();
-            for (int i = 0; i <= cnt; i++)
+            save = new SaveFileDialog();
+            save.Filter = "|*.json";
+            save.FileName = lblName.Text;
+            save.RestoreDirectory = true;
+            if(save.ShowDialog()== DialogResult.OK)
+            {   
+               // string path = save.FileName
+                StreamWriter txt = new StreamWriter(save.FileName);
+                txt.Write(output);
+                txt.Close();
+            }
+            
+            for (int i = 0; i < cnt; i++)
             {
                 var datass = new Data
                 {
@@ -497,6 +500,32 @@ namespace VIDEO
             }
         }
 
+
+        private async void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Left)
+            {
+                IWMPControls2 Ctlcontrols2 = (IWMPControls2)axWindowsMediaPlayer1.Ctlcontrols;
+                double frameRate = axWindowsMediaPlayer1.network.encodedFrameRate;
+                Console.WriteLine("FRAMERATE: " + frameRate); //Debug
+                double step = 1.0 / frameRate;
+                Console.WriteLine("STEP: " + step); //Debug
+                axWindowsMediaPlayer1.Ctlcontrols.currentPosition -= step; //Go backwards
+                axWindowsMediaPlayer1.Ctlcontrols.pause();
+                Ctlcontrols2.step(1);
+            }
+            if (e.KeyCode == Keys.Right)
+            {
+                IWMPControls2 Ctlcontrols2 = (IWMPControls2)axWindowsMediaPlayer1.Ctlcontrols;
+                double frameRate = axWindowsMediaPlayer1.network.encodedFrameRate;
+                Console.WriteLine("FRAMERATE: " + frameRate); //Debug
+                double step = 1.0 / frameRate;
+                Console.WriteLine("STEP: " + step); //Debug
+                axWindowsMediaPlayer1.Ctlcontrols.currentPosition += step; //Go backwards
+                axWindowsMediaPlayer1.Ctlcontrols.pause();
+                Ctlcontrols2.step(1);
+            }
+        }
         private async void btnEDIT_Click(object sender, EventArgs e)
         {
 
@@ -504,8 +533,8 @@ namespace VIDEO
                 {
                     FirebaseResponse res = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID + 1));
                     Data obj = res.ResultAs<Data>();
-                    int timeSt = Convert.ToInt32(obj.StopSec);
-                    int newStop = Convert.ToInt32((axWindowsMediaPlayer1.Ctlcontrols.currentPosition) * 1000);
+                    double timeSt = Convert.ToDouble(obj.StopSec);
+                    double newStop = Convert.ToDouble((axWindowsMediaPlayer1.Ctlcontrols.currentPosition) * 1000);
                     if ( newStop < timeSt)
                     {
                         FirebaseResponse response1 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
@@ -539,8 +568,12 @@ namespace VIDEO
 
         private async void btnMarker_Click(object sender, EventArgs e)
         {
+            mark();
+        }
+        public async void mark() {
             timeStop = axWindowsMediaPlayer1.Ctlcontrols.currentPosition;
-            if (timeStop > timeStart) {
+            if (timeStop > timeStart)
+            {
                 timeStopString = axWindowsMediaPlayer1.Ctlcontrols.currentPositionString;
                 Caunter_Class get;
                 try
@@ -564,20 +597,20 @@ namespace VIDEO
                 var data = new Data
                 {
                     ID = (Convert.ToInt32(get.cnt) + 1).ToString(),
-                    StopSec = Convert.ToInt32(timeStop * 1000),
+                    StopSec = timeStop * 1000,
                     Main = cbMain.Text,
                     Sub1 = cbSub1.Text,
-                    Sub2= cbSub2.Text,
-                    Sub3 =cbSub3.Text,
-                    Sub4 =cbSub4.Text,
-                    Sub5 =cbSub5.Text,
-                    Sub6 =cbSub6.Text
+                    Sub2 = cbSub2.Text,
+                    Sub3 = cbSub3.Text,
+                    Sub4 = cbSub4.Text,
+                    Sub5 = cbSub5.Text,
+                    Sub6 = cbSub6.Text
                 };
                 var obj = new Caunter_Class
                 {
                     cnt = (Convert.ToInt32(get.cnt) + 1).ToString()
                 };
-                SetResponse response = await client.SetTaskAsync("VIDEO/"+lblName.Text+"/"+(Convert.ToInt32(get.cnt)+1).ToString(), data);
+                SetResponse response = await client.SetTaskAsync("VIDEO/" + lblName.Text + "/" + (Convert.ToInt32(get.cnt) + 1).ToString(), data);
                 Data result = response.ResultAs<Data>();
                 SetResponse response2 = await client.SetTaskAsync("Counter/" + lblName.Text, obj);
                 findbyName(lblName.Text);
@@ -585,7 +618,6 @@ namespace VIDEO
                 timeStart = timeStop;
 
             }
-           
         }
         private async void findbyName(string Name) {
             int i, cnt;
