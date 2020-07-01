@@ -135,20 +135,41 @@ namespace VIDEO
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            FirebaseResponse response1 = await client.DeleteTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
+          /* int t = 0;
             try
-             {
+            {
                  FirebaseResponse response = await client.GetTaskAsync("Counter/" + lblName.Text);
                  Caunter_Class get = response.ResultAs<Caunter_Class>();
-                 var obj = new Caunter_Class
-                 {
-                     cnt = (Convert.ToInt32(get.cnt)-1).ToString()
-                 };
-                 SetResponse response3 = await client.SetTaskAsync("Counter/" + lblName.Text, obj);
-                _ = response3.ResultAs<Caunter_Class>();
+                for( int i = 1; i <= Convert.ToInt32(get.cnt); i++)
+                {
+                    t++;
+                    FirebaseResponse response4 = await client.GetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID+i).ToString());
+                    Data obj1 = response4.ResultAs<Data>();
+                    var data = new Data
+                    {
+                        ID = (ID+t).ToString(),
+                        StopSec = obj1.StopSec,
+                        Main = obj1.Main,
+                        Sub1 = obj1.Sub1,
+                        Sub2 = obj1.Sub2,
+                        Sub3 = obj1.Sub3,
+                        Sub4 = obj1.Sub4,
+                        Sub5 = obj1.Sub5,
+                        Sub6 = obj1.Sub6
+                    };
+                    SetResponse response5 = await client.SetTaskAsync("VIDEO/" + lblName.Text + "/" + (ID+t).ToString(), data);
+                    Data result = response5.ResultAs<Data>();                   
+                }
+                var obj = new Caunter_Class
+                {
+                    cnt = (Convert.ToInt32(get.cnt) - 1).ToString()
+                };
+                SetResponse response3 = await client.SetTaskAsync("Counter/" + lblName.Text, obj);
+                Caunter_Class tsf = response3.ResultAs<Caunter_Class>();
+
             }
-             catch { }
-           
+             catch { }*/
+            FirebaseResponse response1 = await client.DeleteTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
             findbyName(lblName.Text);
         }
 
@@ -405,7 +426,15 @@ namespace VIDEO
             save.Filter = "|*.json";
             save.FileName = lblName.Text;
             save.RestoreDirectory = true;
-            if(save.ShowDialog()== DialogResult.OK)
+            var obj2 = new Caunter_Class
+            {
+                cnt = listData.Count().ToString()
+            };
+            SetResponse response4 = await client.SetTaskAsync("Counter/" + lblName.Text, obj2);
+            Caunter_Class tsf = response4.ResultAs<Caunter_Class>();
+
+            FirebaseResponse response3 = await client.DeleteTaskAsync("VIDEO/" + lblName.Text);
+            if (save.ShowDialog()== DialogResult.OK)
             {   
                // string path = save.FileName
                 StreamWriter txt = new StreamWriter(save.FileName);
@@ -413,7 +442,7 @@ namespace VIDEO
                 txt.Close();
             }
             
-            for (int i = 0; i < cnt; i++)
+            for (int i = 0; i < listData.Count; i++)
             {
                 var datass = new Data
                 {
@@ -552,11 +581,22 @@ namespace VIDEO
                 }
                 catch
                 {
+
                 }
             }
 
+
             listData.Sort(new SortData());
-            for (int i = 0; i < cnt; i++)
+            var obj2 = new Caunter_Class
+            {
+                cnt = listData.Count().ToString()
+            };
+            SetResponse response4 = await client.SetTaskAsync("Counter/" + lblName.Text, obj2);
+            Caunter_Class tsf = response4.ResultAs<Caunter_Class>();
+            
+            FirebaseResponse response3 = await client.DeleteTaskAsync("VIDEO/" + lblName.Text);
+            
+            for (int i = 0; i < listData.Count(); i++)
             {
                 var datass = new Data
                 {
@@ -574,6 +614,11 @@ namespace VIDEO
                 _ = respo.ResultAs<Data>();
             }
 
+            findbyName(lblName.Text);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
             findbyName(lblName.Text);
         }
 
