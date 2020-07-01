@@ -135,7 +135,8 @@ namespace VIDEO
 
         private async void button1_Click(object sender, EventArgs e)
         {
-             try
+            FirebaseResponse response1 = await client.DeleteTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
+            try
              {
                  FirebaseResponse response = await client.GetTaskAsync("Counter/" + lblName.Text);
                  Caunter_Class get = response.ResultAs<Caunter_Class>();
@@ -144,7 +145,7 @@ namespace VIDEO
                      cnt = (Convert.ToInt32(get.cnt)-1).ToString()
                  };
                  SetResponse response3 = await client.SetTaskAsync("Counter/" + lblName.Text, obj);
-                 FirebaseResponse response1 = await client.DeleteTaskAsync("VIDEO/" + lblName.Text + "/" + ID);
+                _ = response3.ResultAs<Caunter_Class>();
             }
              catch { }
            
@@ -481,7 +482,7 @@ namespace VIDEO
         private void btnSetTime_Click(object sender, EventArgs e)
         {
             try {
-                double ti = (Convert.ToInt32(txtSetTime.Text))/1000;
+                double ti = (Convert.ToDouble(txtSetTime.Text))/1000;
                 axWindowsMediaPlayer1.Ctlcontrols.currentPosition = ti;
                 
             } catch
