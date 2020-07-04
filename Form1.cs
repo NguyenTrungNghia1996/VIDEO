@@ -39,7 +39,7 @@ namespace VIDEO
             InitializeComponent();
             timer1.Start();
         }
-        private void btnOpen_Click(object sender, EventArgs e)
+        private async void btnOpen_Click(object sender, EventArgs e)
         {
             MediaFile file = new MediaFile();
             using (OpenFileDialog ofd = new OpenFileDialog { Multiselect = false, ValidateNames = true, Filter = "MP4|*.mp4|MKV|*.mkv" }) {
@@ -59,6 +59,48 @@ namespace VIDEO
                     timeStartSring = "00:00";
                     findbyName(file.FileName);
                     //FirebaseResponse response = await client.GetTaskAsync(file.FileName);
+                    try
+                    {
+                        FirebaseResponse response = await client.GetTaskAsync("Counter/" + lblName.Text);
+                        Caunter_Class get = response.ResultAs<Caunter_Class>();
+                    }
+                    catch
+                    {
+                        var obj2 = new Caunter_Class
+                        {
+                            cnt = Convert.ToInt32(0).ToString()
+                        };
+                        SetResponse response3 = await client.SetTaskAsync("Counter/" + lblName.Text, obj2);
+                        try
+                        {
+                            FirebaseResponse response = await client.GetTaskAsync("Count/");
+                            Caunter_Class get = response.ResultAs<Caunter_Class>();
+                            var c = new Caunter_Class()
+                            {
+                                cnt = (Convert.ToInt32(get.cnt) + 1).ToString()
+                            };
+                            
+                            FirebaseResponse response1 = await client.SetTaskAsync("Count/",c);
+                            var b = new Name()
+                            {
+                                name = file.FileName
+                            };
+                            FirebaseResponse response2 = await client.SetTaskAsync("Name/"+c.cnt, b);
+                        }
+                        catch
+                        {
+                            var c = new Caunter_Class()
+                            {
+                                cnt = (Convert.ToInt32(0)).ToString()
+                            };
+                            FirebaseResponse response1 = await client.SetTaskAsync("Count/", c);
+                            var b = new Name()
+                            {
+                                name = file.FileName
+                            };
+                            FirebaseResponse response2 = await client.SetTaskAsync("Name/" + c.cnt, b);
+                        }
+                    }
                 }
             }
         }
@@ -104,8 +146,6 @@ namespace VIDEO
             cbSub4.Enabled = false;
             cbSub5.Enabled = false;
             cbSub6.Enabled = false;
-
-
             
         }
         int indexRow;
@@ -678,6 +718,48 @@ namespace VIDEO
          
         }
 
+        private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            indexRow = e.RowIndex;
+            DataGridViewRow row;
+            try
+            {
+                row = dataGridView2.Rows[indexRow];
+            }
+            catch
+            {
+                row = dataGridView2.Rows[0];
+            }
+            string Names = row.Cells[0].Value.ToString();
+            MediaFile file = new MediaFile();
+            using (OpenFileDialog ofd = new OpenFileDialog { Multiselect = false, ValidateNames = true, Filter = "MP4|*.mp4|MKV|*.mkv", FileName=Names })
+            {
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    MediaFile files = new MediaFile();
+                    FileInfo fi = new FileInfo(ofd.FileName);
+                    file.FileName = Path.GetFileNameWithoutExtension(fi.FullName);
+                    file.Path = fi.FullName;
+                }
+                if (file != null)
+                {
+                    axWindowsMediaPlayer1.URL = file.Path;
+                    lblName.Text = file.FileName;
+                    axWindowsMediaPlayer1.Ctlcontrols.play();
+                    timeStart = 0;
+                    timeStop = 0;
+                    timeStartSring = "00:00";
+                    findbyName(file.FileName);
+                    //FirebaseResponse response = await client.GetTaskAsync(file.FileName);
+                }
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            findAll();
+        }
+
         private async void btnMarker_Click(object sender, EventArgs e)
         {
 
@@ -692,6 +774,7 @@ namespace VIDEO
                 }
                 catch (NullReferenceException)
                 {
+                    
                     var obj2 = new Caunter_Class
                     {
                         cnt = Convert.ToInt32(0).ToString()
@@ -761,6 +844,36 @@ namespace VIDEO
                 }
             }
         }
-        
-    }
+        private async void findAll()
+        {
+            int i, cnt;
+            dt2.Rows.Clear();
+            dt2.Rows.Clear();
+            try
+            {
+                FirebaseResponse response = await client.GetTaskAsync("Count/");
+                Caunter_Class obj = response.ResultAs<Caunter_Class>();
+                cnt = Convert.ToInt32(obj.cnt);
+                label8.Text = cnt.ToString();
+            }
+            catch (NullReferenceException)
+            {
+                cnt = 0;
+            }
+            for (i = 0; i <= cnt + 1; i++)
+            {
+                try
+                {
+                    FirebaseResponse response = await client.GetTaskAsync("Name/" + i);
+                    Name obj1 = response.ResultAs<Name>();
+                    DataRow row = dt2.NewRow();
+                    row["Name"] = obj1.name;
+                    dt2.Rows.Add(row);
+                }
+                catch
+                {
+                }
+            }
+        }
+        }
 }
