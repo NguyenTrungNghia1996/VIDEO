@@ -32,6 +32,7 @@ namespace VIDEO
         int ID;
 
         DataTable dt = new DataTable();
+        DataTable dt2 = new DataTable();
         SaveFileDialog save;
         public Form1()
         {
@@ -64,6 +65,9 @@ namespace VIDEO
         private void Form1_Load(object sender, EventArgs e)
         {
             client = new FireSharp.FirebaseClient(config);
+            dt2.Columns.Add("Name");
+            dataGridView2.DataSource = dt2;
+            dataGridView2.Columns[0].Width = 162;
             dt.Columns.Add("ID");
             dt.Columns.Add("FileName");
             dt.Columns.Add("Stop-time-[ms]");
@@ -100,6 +104,8 @@ namespace VIDEO
             cbSub4.Enabled = false;
             cbSub5.Enabled = false;
             cbSub6.Enabled = false;
+
+
             
         }
         int indexRow;
@@ -675,9 +681,9 @@ namespace VIDEO
         private async void btnMarker_Click(object sender, EventArgs e)
         {
 
-            timeStop = axWindowsMediaPlayer1.Ctlcontrols.currentPosition;
-            timeStopString = axWindowsMediaPlayer1.Ctlcontrols.currentPositionString;
-            axWindowsMediaPlayer1.Ctlcontrols.pause();
+                timeStop = axWindowsMediaPlayer1.Ctlcontrols.currentPosition;
+                timeStopString = axWindowsMediaPlayer1.Ctlcontrols.currentPositionString;
+                axWindowsMediaPlayer1.Ctlcontrols.pause();
                 Caunter_Class get;
                 try
                 {
