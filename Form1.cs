@@ -108,8 +108,10 @@ namespace VIDEO
         {
             client = new FireSharp.FirebaseClient(config);
             dt2.Columns.Add("Name");
+            dt2.Columns.Add("ID");
             dataGridView2.DataSource = dt2;
-            dataGridView2.Columns[0].Width = 162;
+            dataGridView2.Columns[0].Width = 132;
+            dataGridView2.Columns[1].Width = 30;
             dt.Columns.Add("ID");
             dt.Columns.Add("FileName");
             dt.Columns.Add("Stop-time-[ms]");
@@ -868,6 +870,7 @@ namespace VIDEO
                     Name obj1 = response.ResultAs<Name>();
                     DataRow row = dt2.NewRow();
                     row["Name"] = obj1.name;
+                    row["ID"] = i;
                     dt2.Rows.Add(row);
                 }
                 catch
